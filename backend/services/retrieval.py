@@ -241,6 +241,13 @@ def retrieve_context(
         MIN_SCORE,
         question
     )
+    print("\n========== RETRIEVED CHUNKS ==========")
+
+    for text, score, idx in chunks_scored:
+        print(f"\n--- SCORE: {score}")
+        print(text[:500])
+
+    print("=====================================\n")
 
     chunks = [c for c, _, _ in chunks_scored]
 
