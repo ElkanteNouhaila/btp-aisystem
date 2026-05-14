@@ -197,7 +197,7 @@ def _query_index(query_vector: list, top_k: int, filt: Optional[dict]):
 
 def retrieve_context(
     question: str,
-    top_k: int = 18,
+    top_k: int = 20,
     doc_id: Optional[str] = None,
     doc_type: Optional[str] = None,
     source: Optional[str] = None
