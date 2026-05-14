@@ -256,25 +256,40 @@ def sync_gmail():
     for email in emails:
         print("STEP 3 - Processing email")
 
-        text = email.get("text", "")
+        # -------------------------
+        # CHECK IF EMAIL EXISTS
+        # -------------------------
+        existing = index.query(
+            vector=[0] * 384,
+            top_k=1,
+            include_metadata=True,
+            namespace="documents",
+            filter={
+                "message_id": email["message_id"]
+            }
+        )
 
+        already_exists = len(existing["matches"]) > 0
+
+        if already_exists:
+            print("EMAIL ALREADY INDEXED -> SKIPPED")
+            continue
+
+        # -------------------------
+        # NEW EMAIL -> INDEX IT
+        # -------------------------
         doc_id = str(uuid.uuid4())
 
-        result = process_email_from_text(
-            text=email["text"],
-            doc_id=doc_id,
-            email_date=email["date"],
-            message_id=email["message_id"],
-            sender=email["from"],
-            subject=email["subject"]
-        )
-        print("STEP 4 - Indexed:", result)
+    result = process_email_from_text(
+        text=email["text"],
+        doc_id=doc_id,
+        email_date=email["date"],
+        message_id=email["message_id"],
+        sender=email["from"],
+        subject=email["subject"]
+    )
 
-    return jsonify({
-        "message": "gmail synced",
-        "emails": len(emails)
-    })
-
+    print("STEP 4 - Indexed:", result)
 # @app.route("/docs", methods=["GET"])
 # def list_docs():
 #     stats = index.describe_index_stats()
